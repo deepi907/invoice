@@ -8,9 +8,11 @@ import {
 
 import { Input } from "./input";
 import { Label } from "./label";
-
+import { useInvoice } from "@/Context/invoice-context";
 
 export default function BasicDetails() {
+const { invoice, updateInvoice } = useInvoice();
+
   return (
     <Card>
       <CardHeader>
@@ -20,11 +22,16 @@ export default function BasicDetails() {
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="invoiceNumber">Invoice Number</Label>
-          <Input id="invoiceNumber" />
+          <Input value={invoice.invoiceNumber}
+          onChange={(e) => updateInvoice({ invoiceNumber: e.target.value })}
+          id="invoiceNumber" />
         </div>
          <div> 
               <Label htmlFor="date">Date</Label>
-          <Input id="date" type="date" />
+
+          <Input id="date" type="date" 
+          onChange={(e) => updateInvoice({ date: e.target.value })}
+          value={invoice.date} />
          </div>
         
         

@@ -1,9 +1,12 @@
 import React from 'react'
+import { useInvoice } from "@/Context/invoice-context";
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Input } from '../ui/input'
 import { Label } from './label'
 
 export default function ContactDetails() {
+  const { invoice, updateInvoice } = useInvoice();
+  console.log(invoice);
   return (
     <Card>
       <CardHeader>
@@ -18,11 +21,17 @@ export default function ContactDetails() {
           
           <div>
             <Label htmlFor="fromName">Name</Label>
-            <Input id="fromName" placeholder="Your name or company" />
+            <Input id="fromName"
+            value={invoice.fromName}
+            onChange={(e) => updateInvoice({ fromName: e.target.value })}
+            placeholder="Your name or company" />
           </div>
                <div>
             <Label htmlFor="fromEmail">Email</Label>
-            <Input id="fromEmail" placeholder="your@email.com" type="email " />
+            <Input id="fromEmail" 
+              value={invoice.fromEmail}
+            onChange={(e) => updateInvoice({ fromEmail: e.target.value })}
+            placeholder="your@email.com" type="email" />
           </div>
 
         </div>
@@ -34,12 +43,18 @@ export default function ContactDetails() {
 
           <div>
             <Label htmlFor="toName">Name</Label>
-            <Input id="toName" placeholder="Client name or company" />
+            <Input id="toName"
+               value={invoice.toName}
+            onChange={(e) => updateInvoice({ toName: e.target.value })}
+            placeholder="Client name or company" />
           </div>
 
              <div>
             <Label htmlFor="ToEmail">Email</Label>
-            <Input id="ToEmail" placeholder="your@email.com" type="email " />
+            <Input id="ToEmail" 
+               value={invoice.toEmail}
+            onChange={(e) => updateInvoice({ toEmail: e.target.value })}
+            placeholder="client@email.com" type="email" />
           </div>
         </div>
 
