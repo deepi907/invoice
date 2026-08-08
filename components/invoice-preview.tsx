@@ -2,6 +2,9 @@ import { Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Ole } from "next/font/google";
+import Out from "@/Assest/out.jpg";
+import Image from "next/image";
+
 const ole = Ole({
   weight: "400",
   subsets: ["latin"],
@@ -39,8 +42,16 @@ export default function InvoicePreview() {
   </div>
           </div>
 
-          <Card>
-            <CardContent className="p-8">
+          
+            <Card className="relative overflow-hidden">
+<Image
+  src={Out}
+  alt="Watermark"
+  width={2000}
+  height={20}
+  className="absolute inset-0 m-auto h-[599px] -contain opacity-40 pointer-events-none select-none"
+/>
+      <CardContent className="relative z-10 p-8">
                 {/*invoice header */ }
                  <div className="flex justify-between items-start mb-8">
                     <div>

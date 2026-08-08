@@ -2,26 +2,83 @@ import { Trash2 } from "lucide-react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
+import type { InvoiceItem as InvoiceItemType } from "../public/Types/invoice";
+import { useInvoice } from "@/Context/invoice-context";
 
-export default function InvoiceItem() {
-  function removalItem(index: any) {
-    throw new Error("Function not implemented.");
+interface InvoiceItemProps {
+  item: InvoiceItemType;
+  index: number;
+  canRemove: boolean;
+}
+
+export default function InvoiceItem({
+  item,
+  index,
+  canRemove,
+}: InvoiceItemProps) {
+
+const { removeItem, updateItem } = useInvoice();
+const handleQuantityChange = (value: string) => {
+   if (value === "") {
+    updateItem(index, "quantity", "");
+
+   }else {
+    const numValue = Number.parseInt(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      updateItem(index, "quantity", numValue);
+    }
+   }
+};
+
+const handleQuantityBlur = () => {
+  if (item.quantity === "" || item.quantity === 0) {
+    updateItem(index, "quantity", 1);
   }
+};
 
+const handleRateChange = (value: string) => {
+  if (value === "" )
+      {
+    updateItem(index, "rate", "");
+  } else {
+    const numValue = Number.parseFloat(value);
+    if(!isNaN(numValue) && numValue >= 0) {
+      updateItem(index, "rate , numValue");
+    }
+  }
+};
+
+const handleRateBlur = () => {
+  if (item.rate === "") {
+    updateItem(index, "rate", 0);
+  }
+};
   return (
   <div className="grid grid-cols-12 gap-4 p-4 border rounded-lg">
   <div className="col-span-5 ">
   <Label>Description</Label>
-  <Input placeholder="item description"/>
+  <Input placeholder="item description"
+  value={ item.description}
+  onChange={(e) => updateItem(index, "description", e.target.value)}
+  />
   </div>
 <div className="col-span-2">
    <Label>Quantity</Label>
-  <Input type="number" min="1"/>
+  <Input type="number" min="1"
+  value={ item.quantity}
+  onChange={(e) => handleQuantityChange(e.target.value)}
+  onBlur={handleQuantityBlur}
+
+  />
   </div>
 
   <div className="col-span-2">
    <Label>Rate ($)</Label>
-  <Input type="number" min="0" step="0.01" />
+  <Input type="number" min="0" step="0.01" 
+   value={ item.rate}
+  onChange={(e) => handleRateChange(e.target.value)}
+   onBlur={handleRateBlur}
+  />
   </div>
  
 <div className="col-span-2  ">
@@ -31,7 +88,8 @@ export default function InvoiceItem() {
   </div>
 </div>
 <div className="col-span-1 flex items-end">
-  <Button variant="outline"size="icon">
+  <Button variant="outline"size="icon" onClick={() => removeItem(index)} 
+  disabled={!canRemove}>
     <Trash2 className="w-4 h-4" /> 
       </Button>
   </div>
