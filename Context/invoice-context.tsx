@@ -2,7 +2,9 @@
 
 import { initialInvoiceData } from "@/lib/constants";
 import { InvoiceData, InvoiceItem, } from "@/public/Types/invoice";
+
 import { createContext, ReactNode, useState, useContext} from "react";
+import { calculateTotals } from "@/utilis/calculation";
 interface InvoiceContextType {
     invoice: InvoiceData;
     updateInvoice: (updates: Partial<InvoiceData>) => void;
@@ -22,6 +24,16 @@ export function InvoiceProvider({ children }: { children: ReactNode }) {
 
     const updateInvoice = (updates: Partial<InvoiceData>) => {
           const newInvoice = { ...invoice, ...updates };
+         if ( updates.items || updates.taxRate !== undefined) {
+          const { subtotal, taxAmount, total } = calculateTotals(
+            updates.items || invoice.items,
+            updates.taxRate !== undefined ? updates.taxRate : invoice.taxRate
+          );
+          newInvoice.subTotal = subtotal;
+          newInvoice.taxAmount = taxAmount;
+          newInvoice.total = total;  
+         }
+
       setInvoice(newInvoice);
         };
 
@@ -42,14 +54,36 @@ export function InvoiceProvider({ children }: { children: ReactNode }) {
                    }
         };
         const updateItem = (
-            index: number,
-            field: keyof InvoiceItem,
+              index: number,
+              field: keyof InvoiceItem,
             value: string | number
              
          ) => {
             const newItems = [...invoice.items];
             newItems[index] = { ...newItems[index], [field]: value };
+             
+            if (field === "quantity" || field === "rate") {
+                const quantityValue = newItems[index].quantity;
+                const rateValue = newItems[index].rate;
 
+                let quantity: number;
+                if ( typeof quantityValue === "string") {
+                    quantity = quantityValue === "" ? 0 : Number(quantityValue);
+            }
+            else {
+                quantity = quantityValue;
+            }
+            
+            let rate: number;
+            if (typeof rateValue === "string") {
+                rate = rateValue === "" ? 0 : Number(rateValue);
+
+            } else {
+                rate = rateValue
+            }
+
+            newItems[index].amount = quantity * rate;
+        }
              updateInvoice ({ items: newItems });
         };
     return(
